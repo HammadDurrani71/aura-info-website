@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { MessageSquare, ScanSearch, Navigation } from "lucide-react";
 
 const steps = [
@@ -11,8 +11,8 @@ const steps = [
     title: "Describe",
     description:
       "Enter a natural language description or apply attribute filters like clothing color, gender, or accessories.",
-    color: "#5b67f4",
-    glow: "rgba(91, 103, 244, 0.4)",
+    color: "#2d6aff",
+    glow: "rgba(45, 106, 255, 0.4)",
   },
   {
     number: "02",
@@ -29,23 +29,75 @@ const steps = [
     title: "Track",
     description:
       "Select a match and watch their full path light up on the 2D mall map in real-time.",
-    color: "#00d4ff",
-    glow: "rgba(0, 212, 255, 0.4)",
+    color: "#4da6ff",
+    glow: "rgba(77, 166, 255, 0.4)",
   },
 ];
 
+const ORB_HALF = 8; // w-4 h-4 → 16px / 2
+
 export default function HowItWorksSection() {
   const lineRef = useRef<HTMLDivElement>(null);
+  const iconStartRef = useRef<HTMLDivElement>(null);
+  const iconEndRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(lineRef, { once: true, margin: "-100px" });
+
+  const [isHoveringSection, setIsHoveringSection] = useState(false);
+  const orbX = useMotionValue(0);
+  const orbSpringX = useSpring(orbX, { stiffness: 200, damping: 20 });
+
+  const updateOrbFromClientX = useCallback((clientX: number) => {
+    const row = lineRef.current;
+    const i1 = iconStartRef.current;
+    const i3 = iconEndRef.current;
+    if (!row || !i1 || !i3) return;
+    const rowRect = row.getBoundingClientRect();
+    const i1Rect = i1.getBoundingClientRect();
+    const i3Rect = i3.getBoundingClientRect();
+    const leftBound = i1Rect.left - rowRect.left;
+    const rightBound = i3Rect.right - rowRect.left;
+    const mouseX = clientX - rowRect.left;
+    const clampedCenter = Math.min(
+      Math.max(mouseX, leftBound + ORB_HALF),
+      rightBound - ORB_HALF
+    );
+    orbX.set(clampedCenter - ORB_HALF);
+  }, [orbX]);
+
+  const centerOrbOnTrack = useCallback(() => {
+    const row = lineRef.current;
+    const i1 = iconStartRef.current;
+    const i3 = iconEndRef.current;
+    if (!row || !i1 || !i3) return;
+    const rowRect = row.getBoundingClientRect();
+    const i1Rect = i1.getBoundingClientRect();
+    const i3Rect = i3.getBoundingClientRect();
+    const leftBound = i1Rect.left - rowRect.left;
+    const rightBound = i3Rect.right - rowRect.left;
+    const mid = (leftBound + rightBound) / 2;
+    orbX.set(mid - ORB_HALF);
+  }, [orbX]);
+
+  useEffect(() => {
+    if (!isHoveringSection) return;
+    const onMove = (e: MouseEvent) => updateOrbFromClientX(e.clientX);
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [isHoveringSection, updateOrbFromClientX]);
 
   return (
     <section
       id="how-it-works"
-      className="relative py-24 sm:py-32 bg-[#0a0a0f] overflow-hidden"
+      className="relative py-24 sm:py-32 bg-[#050a18] overflow-hidden"
+      onMouseEnter={() => {
+        setIsHoveringSection(true);
+        requestAnimationFrame(() => centerOrbOnTrack());
+      }}
+      onMouseLeave={() => setIsHoveringSection(false)}
     >
       {/* Background grid */}
       <div className="absolute inset-0 grid-bg opacity-50" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#5b67f4]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#2d6aff]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Section header */}
@@ -56,7 +108,7 @@ export default function HowItWorksSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00d4ff]/30 bg-[#00d4ff]/10 text-[#67e8f9] text-sm font-medium mb-5">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#4da6ff]/30 bg-[#4da6ff]/10 text-[#67e8f9] text-sm font-medium mb-5">
             Simple Workflow
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
@@ -70,30 +122,114 @@ export default function HowItWorksSection() {
 
         {/* Steps */}
         <div className="relative">
-          {/* Animated connector line (desktop) */}
-          <div
-            ref={lineRef}
-            className="hidden lg:block absolute top-[52px] left-[calc(16.67%+24px)] right-[calc(16.67%+24px)] h-px"
-          >
-            <div className="relative w-full h-full">
-              {/* Base line */}
-              <div className="absolute inset-0 bg-white/5 rounded-full" />
-              {/* Animated fill */}
+
+          {/* ── Desktop layout ── */}
+          <div className="hidden lg:block">
+
+            <div ref={lineRef} className="relative grid grid-cols-3 gap-8">
+              {/* Connector line — through vertical center of icons (104px / 2 = 52px) */}
+              <div className="pointer-events-none absolute left-[16.67%] right-[16.67%] top-[52px] z-[5] h-px -translate-y-1/2">
+                {/* Base track */}
+                <div className="absolute inset-0 bg-white/5 rounded-full" />
+                {/* Animated fill */}
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+                  transition={{ duration: 1.2, ease: "easeInOut", delay: 0.4 }}
+                  style={{
+                    originX: 0,
+                    background:
+                      "linear-gradient(90deg, #2d6aff 0%, #a78bfa 50%, #4da6ff 100%)",
+                  }}
+                  className="absolute inset-0 rounded-full"
+                />
+              </div>
+
+              {/* Cursor-following orb on connector line (desktop) */}
               <motion.div
-                initial={{ scaleX: 0 }}
-                animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-                transition={{ duration: 1.2, ease: "easeInOut", delay: 0.4 }}
+                className="pointer-events-none absolute top-[52px] left-0 z-20 h-4 w-4 -translate-y-1/2 rounded-full"
                 style={{
-                  originX: 0,
-                  background:
-                    "linear-gradient(90deg, #5b67f4 0%, #a78bfa 50%, #00d4ff 100%)",
+                  x: orbSpringX,
+                  background: "#4da6ff",
+                  boxShadow: "0 0 12px 4px #4da6ff",
                 }}
-                className="absolute inset-0 rounded-full"
+                animate={{ opacity: isHoveringSection ? 1 : 0 }}
+                transition={{ duration: 0.2 }}
               />
+
+              {steps.map((step, i) => {
+                const Icon = step.icon;
+                return (
+                  <div
+                    key={step.title}
+                    className="relative flex flex-col items-center text-center"
+                  >
+                    {/* Large decorative step number */}
+                    <span
+                      className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center text-[8rem] font-bold leading-none text-white opacity-[0.04] select-none"
+                      aria-hidden
+                    >
+                      {step.number}
+                    </span>
+
+                    <motion.div
+                      ref={i === 0 ? iconStartRef : i === 2 ? iconEndRef : undefined}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: i * 0.15 }}
+                      whileHover={{ scale: 1.08 }}
+                      className="relative z-10 mb-8 flex h-[104px] w-[104px] shrink-0 items-center justify-center group"
+                    >
+                      {/* Outer ring */}
+                      <div
+                        className="absolute inset-0 rounded-full border opacity-20"
+                        style={{ borderColor: step.color }}
+                      />
+                      {/* Inner circle */}
+                      <div
+                        className="relative w-20 h-20 rounded-full flex items-center justify-center"
+                        style={{
+                          background: `radial-gradient(circle, ${step.color}22 0%, ${step.color}08 100%)`,
+                          border: `1.5px solid ${step.color}40`,
+                        }}
+                      >
+                        <Icon size={30} style={{ color: step.color }} strokeWidth={1.5} />
+                      </div>
+                      {/* Glow on hover */}
+                      <div
+                        className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
+                        style={{ backgroundColor: step.glow }}
+                      />
+                      {/* Number badge */}
+                      <div
+                        className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                        style={{ backgroundColor: step.color }}
+                      >
+                        {i + 1}
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: i * 0.15 + 0.2 }}
+                      className="relative z-10 flex flex-col items-center text-center"
+                    >
+                      <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
+                      <p className="text-[#e2e8f0]/55 text-base leading-relaxed max-w-xs">
+                        {step.description}
+                      </p>
+                    </motion.div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+          {/* ── Mobile layout — vertical stack, no connector line ── */}
+          <div className="flex flex-col gap-10 lg:hidden">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
@@ -103,19 +239,22 @@ export default function HowItWorksSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: i * 0.15 }}
-                  className="flex flex-col items-center text-center lg:items-start lg:text-left group"
+                  className="relative flex flex-col items-center text-center group"
                 >
-                  {/* Step icon circle */}
-                  <motion.div
-                    whileHover={{ scale: 1.08 }}
-                    className="relative w-[104px] h-[104px] flex items-center justify-center mb-6"
+                  {/* Large decorative step number */}
+                  <span
+                    className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center text-[8rem] font-bold leading-none text-white opacity-[0.04] select-none"
+                    aria-hidden
                   >
-                    {/* Outer ring */}
+                    {step.number}
+                  </span>
+
+                  {/* Icon */}
+                  <div className="relative z-10 mb-6 flex h-[104px] w-[104px] items-center justify-center">
                     <div
                       className="absolute inset-0 rounded-full border opacity-20"
                       style={{ borderColor: step.color }}
                     />
-                    {/* Inner filled circle */}
                     <div
                       className="relative w-20 h-20 rounded-full flex items-center justify-center"
                       style={{
@@ -123,46 +262,24 @@ export default function HowItWorksSection() {
                         border: `1.5px solid ${step.color}40`,
                       }}
                     >
-                      <Icon
-                        size={30}
-                        style={{ color: step.color }}
-                        strokeWidth={1.5}
-                      />
+                      <Icon size={30} style={{ color: step.color }} strokeWidth={1.5} />
                     </div>
-                    {/* Glow effect */}
-                    <div
-                      className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
-                      style={{ backgroundColor: step.glow }}
-                    />
-                    {/* Step number badge */}
                     <div
                       className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
                       style={{ backgroundColor: step.color }}
                     >
                       {i + 1}
                     </div>
-                  </motion.div>
-
-                  {/* Large number background */}
-                  <div className="relative mb-3">
-                    <span
-                      className="text-8xl font-black leading-none select-none pointer-events-none absolute -top-6 left-1/2 lg:left-0 -translate-x-1/2 lg:translate-x-0 opacity-5"
-                      style={{ color: step.color }}
-                    >
-                      {step.number}
-                    </span>
-                    <h3 className="text-2xl font-bold text-white relative z-10">
-                      {step.title}
-                    </h3>
                   </div>
-
-                  <p className="text-[#e2e8f0]/55 text-base leading-relaxed max-w-xs">
+                  <h3 className="relative z-10 text-2xl font-bold text-white mb-3">{step.title}</h3>
+                  <p className="relative z-10 text-[#e2e8f0]/55 text-base leading-relaxed max-w-xs">
                     {step.description}
                   </p>
                 </motion.div>
               );
             })}
           </div>
+
         </div>
 
         {/* Illustration placeholder */}
@@ -173,9 +290,9 @@ export default function HowItWorksSection() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="mt-20 w-full"
         >
-          <div className="relative rounded-2xl border border-dashed border-white/10 bg-[#111118]/60 p-10 flex flex-col items-center justify-center gap-3 min-h-[200px]">
+          <div className="relative rounded-2xl border border-dashed border-white/10 bg-[#0a1628]/60 p-10 flex flex-col items-center justify-center gap-3 min-h-[200px]">
             <div className="flex gap-3">
-              {["#5b67f4", "#a78bfa", "#00d4ff"].map((c, i) => (
+              {["#2d6aff", "#a78bfa", "#4da6ff"].map((c, i) => (
                 <div
                   key={i}
                   className="w-2 h-2 rounded-full animate-pulse"

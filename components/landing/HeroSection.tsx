@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import Image from "next/image";
 
 interface Particle {
   x: number;
@@ -33,7 +34,7 @@ function ParticleCanvas() {
     window.addEventListener("resize", resize);
 
     const PARTICLE_COUNT = 80;
-    const colors = ["#5b67f4", "#00d4ff", "#a78bfa"];
+    const colors = ["#2d6aff", "#4da6ff", "#a78bfa"];
 
     particlesRef.current = Array.from({ length: PARTICLE_COUNT }, () => ({
       x: Math.random() * canvas.width,
@@ -58,7 +59,7 @@ function ParticleCanvas() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(91, 103, 244, ${0.12 * (1 - dist / 120)})`;
+            ctx.strokeStyle = `rgba(45, 106, 255, ${0.12 * (1 - dist / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -101,31 +102,136 @@ function ParticleCanvas() {
   );
 }
 
+const DASHBOARD_SLIDES = [
+  { src: "/AURA_Dashboard.png", alt: "AURA dashboard overview" },
+  { src: "/AURA_Search_Bar.png", alt: "AURA search" },
+  { src: "/AURA_Monitoring.png", alt: "AURA monitoring" },
+  { src: "/AURA_Floor_Map.png", alt: "AURA floor map" },
+  { src: "/AURA_Analytics.png", alt: "AURA analytics" },
+  { src: "/AURA_Watchlist.png", alt: "AURA watchlist" },
+  { src: "/AURA_Settings.png", alt: "AURA settings" },
+];
+
+function DashboardCarousel() {
+  const n = DASHBOARD_SLIDES.length;
+  const [index, setIndex] = useState(0);
+
+  const goNext = () => setIndex((i) => (i + 1) % n);
+  const goPrev = () => setIndex((i) => (i - 1 + n) % n);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setIndex((i) => (i + 1) % n);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [n]);
+
+  return (
+    <div className="px-3 pb-3">
+      <div
+        className="group relative overflow-hidden rounded-2xl border border-[#2d6aff]/30 bg-[#0a1628]"
+        style={{ boxShadow: "0 0 40px rgba(45, 106, 255, 0.15)" }}
+      >
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl">
+          <motion.div
+            className="absolute inset-0 cursor-grab active:cursor-grabbing"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.1}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -50) goNext();
+              else if (info.offset.x > 50) goPrev();
+            }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={index}
+                className="absolute inset-0"
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ duration: 0.45, ease: "easeInOut" }}
+              >
+                <Image
+                  src={DASHBOARD_SLIDES[index].src}
+                  alt={DASHBOARD_SLIDES[index].alt}
+                  fill
+                  className="object-contain rounded-2xl"
+                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  priority={index === 0}
+                  draggable={false}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+
+          <button
+            type="button"
+            aria-label="Previous slide"
+            onClick={(e) => {
+              e.stopPropagation();
+              goPrev();
+            }}
+            className="pointer-events-none absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/10 p-2 opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-white/20 group-hover:pointer-events-auto group-hover:opacity-100"
+          >
+            <ChevronLeft className="h-5 w-5 text-white" strokeWidth={2} />
+          </button>
+          <button
+            type="button"
+            aria-label="Next slide"
+            onClick={(e) => {
+              e.stopPropagation();
+              goNext();
+            }}
+            className="pointer-events-none absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/10 p-2 opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-white/20 group-hover:pointer-events-auto group-hover:opacity-100"
+          >
+            <ChevronRight className="h-5 w-5 text-white" strokeWidth={2} />
+          </button>
+        </div>
+
+        <div className="flex justify-center gap-2 py-3">
+          {DASHBOARD_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Show slide ${i + 1}`}
+              onClick={() => setIndex(i)}
+              className={`h-2 w-2 rounded-full transition-colors duration-200 ${
+                i === index ? "bg-[#4da6ff]" : "bg-white/20 hover:bg-white/30"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HeroSection() {
   const handleScroll = (id: string) => {
     document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0f] grid-bg">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#050a18] grid-bg">
       {/* Particle animation */}
       <ParticleCanvas />
 
       {/* Radial glow blobs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#5b67f4]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#00d4ff]/8 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#5b67f4]/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#2d6aff]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#4da6ff]/8 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#2d6aff]/5 rounded-full blur-[150px] pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 flex flex-col items-center text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-16 flex flex-col items-center text-center">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#5b67f4]/30 bg-[#5b67f4]/10 text-[#a5b4fc] text-sm font-medium mb-8"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#2d6aff]/30 bg-[#2d6aff]/10 text-[#a5b4fc] text-sm font-medium mb-8"
         >
-          <span className="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[#4da6ff] animate-pulse" />
           AI-Powered Video Analytics Platform
         </motion.div>
 
@@ -134,7 +240,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-0"
         >
           <span className="text-white">Your Security,</span>
           <br />
@@ -146,10 +252,20 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="text-lg sm:text-xl text-[#e2e8f0]/60 max-w-2xl leading-relaxed mb-10"
+          className="text-lg sm:text-xl text-[#e2e8f0]/60 max-w-2xl leading-relaxed mb-0"
         >
           AURA transforms your existing CCTV network into an intelligent search,
           tracking, and alert system — powered by AI.
+        </motion.p>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+          className="text-sm text-[#94a3b8] mt-6 mb-10"
+        >
+          Democratizing intelligent video analytics for commercial spaces.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -161,14 +277,14 @@ export default function HeroSection() {
         >
           <button
             onClick={() => handleScroll("#how-it-works")}
-            className="group flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#5b67f4] to-[#4f58d4] text-white font-semibold text-base hover:from-[#6b77ff] hover:to-[#5b67f4] transition-all duration-300 shadow-lg shadow-[#5b67f4]/30 hover:shadow-[#5b67f4]/50 hover:scale-[1.02]"
+            className="group flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#2d6aff] to-[#1a56e8] text-white font-semibold text-base hover:from-[#4d80ff] hover:to-[#2d6aff] transition-all duration-300 shadow-lg shadow-[#2d6aff]/30 hover:shadow-[#2d6aff]/50 hover:scale-[1.02]"
           >
             <Play size={16} className="group-hover:scale-110 transition-transform" />
             See How It Works
           </button>
           <button
             onClick={() => handleScroll("#contact")}
-            className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl border border-white/20 text-white/80 font-semibold text-base hover:border-[#00d4ff]/50 hover:text-[#00d4ff] hover:bg-[#00d4ff]/5 transition-all duration-300"
+            className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl border border-white/20 text-white/80 font-semibold text-base hover:border-[#4da6ff]/50 hover:text-[#4da6ff] hover:bg-[#4da6ff]/5 transition-all duration-300"
           >
             Request Demo
             <ArrowRight size={16} />
@@ -182,9 +298,9 @@ export default function HeroSection() {
           transition={{ duration: 0.9, delay: 0.65 }}
           className="w-full max-w-5xl"
         >
-          <div className="relative rounded-2xl border border-white/10 bg-[#111118] overflow-hidden shadow-2xl shadow-black/50">
+          <div className="relative rounded-2xl border border-white/10 bg-[#0a1628] overflow-hidden shadow-2xl shadow-black/50">
             {/* Faux browser bar */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-[#0d0d14]">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-[#060d1f]">
               <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
               <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
               <div className="w-3 h-3 rounded-full bg-[#28c840]" />
@@ -192,37 +308,15 @@ export default function HeroSection() {
                 <span className="text-xs text-white/30">aura.dashboard.app</span>
               </div>
             </div>
-            {/* Placeholder content */}
-            <div className="aspect-[16/9] flex flex-col items-center justify-center gap-4 p-8 bg-gradient-to-br from-[#111118] to-[#0d0d18]">
-              <div className="flex gap-3 mb-2">
-                {["#5b67f4", "#00d4ff", "#a78bfa"].map((c, i) => (
-                  <div
-                    key={i}
-                    className="w-2 h-2 rounded-full animate-pulse"
-                    style={{ backgroundColor: c, animationDelay: `${i * 0.3}s` }}
-                  />
-                ))}
-              </div>
-              <div className="text-[#e2e8f0]/20 text-sm font-mono border border-dashed border-white/10 rounded-xl px-8 py-6 text-center">
-                <span className="text-2xl block mb-2">🖥️</span>
-                <span className="text-[#e2e8f0]/40 font-medium text-base block">
-                  [ ADD DASHBOARD SCREENSHOT HERE ]
-                </span>
-                <span className="text-[#e2e8f0]/20 text-xs mt-1 block">
-                  Recommended: 1280×720 or higher
-                </span>
-              </div>
-            </div>
-            {/* Bottom gradient fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none" />
+            <DashboardCarousel />
           </div>
           {/* Reflection glow */}
-          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 bg-[#5b67f4]/20 blur-3xl rounded-full" />
+          <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 bg-[#2d6aff]/20 blur-3xl rounded-full" />
         </motion.div>
       </div>
 
       {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050a18] to-transparent pointer-events-none" />
     </section>
   );
 }

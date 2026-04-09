@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
+  --background: #050a18;
   --foreground: #e2e8f0;
-  --primary: #5b67f4;
-  --accent: #00d4ff;
-  --surface: #111118;
+  --primary: #2d6aff;
+  --accent: #4da6ff;
+  --surface: #0a1628;
 }
 
 @theme inline {
@@ -33,30 +33,30 @@ html {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: #050a18;
 }
 ::-webkit-scrollbar-thumb {
-  background: #5b67f4;
+  background: #2d6aff;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00d4ff;
+  background: #4da6ff;
 }
 
 /* Glow utilities */
 .glow-primary {
-  box-shadow: 0 0 20px rgba(91, 103, 244, 0.4);
+  box-shadow: 0 0 20px rgba(45, 106, 255, 0.4);
 }
 .glow-accent {
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 20px rgba(77, 166, 255, 0.4);
 }
 .text-glow {
-  text-shadow: 0 0 30px rgba(91, 103, 244, 0.6);
+  text-shadow: 0 0 30px rgba(45, 106, 255, 0.6);
 }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #5b67f4 0%, #00d4ff 100%);
+  background: linear-gradient(135deg, #2d6aff 0%, #4da6ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -64,15 +64,15 @@ html {
 
 /* Animated gradient border */
 @keyframes borderGlow {
-  0%, 100% { border-color: rgba(91, 103, 244, 0.5); }
-  50% { border-color: rgba(0, 212, 255, 0.5); }
+  0%, 100% { border-color: rgba(45, 106, 255, 0.5); }
+  50% { border-color: rgba(77, 166, 255, 0.5); }
 }
 
 /* Grid background */
 .grid-bg {
   background-image: 
-    linear-gradient(rgba(91, 103, 244, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91, 103, 244, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(45, 106, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 106, 255, 0.05) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 

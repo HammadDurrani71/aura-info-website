@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Search, Map, Bell, SlidersHorizontal, BarChart3, Target } from "lucide-react";
 
 const features = [
@@ -9,16 +9,16 @@ const features = [
     title: "Natural Language Search",
     description:
       "Describe a person in plain English. AURA finds them instantly across all cameras.",
-    color: "#5b67f4",
-    glow: "rgba(91, 103, 244, 0.3)",
+    color: "#2d6aff",
+    glow: "rgba(45, 106, 255, 0.3)",
   },
   {
     icon: Map,
     title: "Cross-Camera Path Tracking",
     description:
       "Watch a person's full journey across your entire camera network on an interactive 2D map.",
-    color: "#00d4ff",
-    glow: "rgba(0, 212, 255, 0.3)",
+    color: "#4da6ff",
+    glow: "rgba(77, 166, 255, 0.3)",
   },
   {
     icon: Bell,
@@ -54,7 +54,7 @@ const features = [
   },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
@@ -63,7 +63,7 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
@@ -74,11 +74,11 @@ const cardVariants = {
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="relative py-24 sm:py-32 bg-[#0a0a0f] overflow-hidden">
+    <section id="features" className="relative py-24 sm:py-32 bg-[#050a18] overflow-hidden">
       {/* Background accent */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-[#5b67f4]/30 to-transparent" />
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-[#5b67f4]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#00d4ff]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-[#2d6aff]/30 to-transparent" />
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-[#2d6aff]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#4da6ff]/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
@@ -89,7 +89,7 @@ export default function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#5b67f4]/30 bg-[#5b67f4]/10 text-[#a5b4fc] text-sm font-medium mb-5">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#2d6aff]/30 bg-[#2d6aff]/10 text-[#a5b4fc] text-sm font-medium mb-5">
             Platform Capabilities
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
@@ -118,7 +118,7 @@ export default function FeaturesSection() {
                 whileHover={{ scale: 1.02, y: -4 }}
                 className="group relative p-6 rounded-2xl border border-white/8 bg-[#111118] overflow-hidden cursor-default transition-all duration-300 hover:border-white/15"
                 style={{
-                  background: `linear-gradient(135deg, #111118 0%, #0d0d15 100%)`,
+                  background: `linear-gradient(135deg, #0a1628 0%, #060d1f 100%)`,
                 }}
               >
                 {/* Hover glow overlay */}

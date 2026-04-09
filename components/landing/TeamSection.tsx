@@ -5,35 +5,35 @@ import { motion } from "framer-motion";
 const teamMembers = [
   {
     initials: "H",
-    name: "Hammad",
+    name: "Hammad Durrani",
     role: "Frontend Lead",
-    gradient: "from-[#5b67f4] to-[#818cf8]",
-    ringColor: "rgba(91, 103, 244, 0.4)",
+    gradient: "from-[#2d6aff] to-[#6b9fff]",
+    ringColor: "rgba(45, 106, 255, 0.4)",
   },
   {
     initials: "U",
-    name: "Usman",
+    name: "Usman Farooq",
     role: "Project Lead",
-    gradient: "from-[#00d4ff] to-[#0ea5e9]",
-    ringColor: "rgba(0, 212, 255, 0.4)",
+    gradient: "from-[#4da6ff] to-[#0ea5e9]",
+    ringColor: "rgba(77, 166, 255, 0.4)",
   },
   {
     initials: "R",
-    name: "Rudra",
+    name: "Rudra Lakhani",
     role: "Backend & ML",
     gradient: "from-[#a78bfa] to-[#7c3aed]",
     ringColor: "rgba(167, 139, 250, 0.4)",
   },
   {
     initials: "H",
-    name: "Hala",
+    name: "Hala Abu Salem",
     role: "ML & Attributes",
     gradient: "from-[#f472b6] to-[#ec4899]",
     ringColor: "rgba(244, 114, 182, 0.4)",
   },
   {
     initials: "H",
-    name: "Hamza",
+    name: "Muhammad Hamza Saddiqi",
     role: "Security & Dashboard",
     gradient: "from-[#34d399] to-[#059669]",
     ringColor: "rgba(52, 211, 153, 0.4)",
@@ -42,13 +42,13 @@ const teamMembers = [
 
 export default function TeamSection() {
   return (
-    <section id="team" className="relative py-24 sm:py-32 bg-[#0a0a0f] overflow-hidden">
+    <section id="team" className="relative py-24 sm:py-32 bg-[#050a18] overflow-hidden">
       {/* Separator */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
       {/* Background */}
       <div className="absolute inset-0 grid-bg opacity-30" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#5b67f4]/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#2d6aff]/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
@@ -68,14 +68,19 @@ export default function TeamSection() {
           </h2>
 
           {/* University badge */}
-          <div className="flex items-center justify-center gap-2 mt-3">
+          <a
+            href="http://uowdubai.ac.ae/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 mt-3"
+          >
             <div className="w-5 h-5 rounded bg-gradient-to-br from-[#003865] to-[#0059a3] flex items-center justify-center text-[8px] font-bold text-white">
               UW
             </div>
             <span className="text-[#e2e8f0]/40 text-sm font-medium">
               University of Wollongong Dubai
             </span>
-          </div>
+          </a>
         </motion.div>
 
         {/* Team photo placeholder */}
@@ -86,7 +91,7 @@ export default function TeamSection() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-14"
         >
-          <div className="rounded-2xl border border-dashed border-white/10 bg-[#111118]/60 p-8 flex flex-col items-center justify-center gap-3 min-h-[140px] max-w-2xl mx-auto">
+          <div className="rounded-2xl border border-dashed border-white/10 bg-[#0a1628]/60 p-8 flex flex-col items-center justify-center gap-3 min-h-[140px] max-w-2xl mx-auto">
             <span className="text-2xl">📸</span>
             <span className="text-[#e2e8f0]/30 text-sm font-medium font-mono">
               [ ADD TEAM PHOTO HERE ]
@@ -107,9 +112,9 @@ export default function TeamSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={{ scale: 1.05, y: -5 }}
-              className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/8 bg-[#111118] w-44 cursor-default transition-all duration-300 hover:border-white/15"
+              className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/8 bg-[#111118] w-48 cursor-default transition-all duration-300 hover:border-white/15"
               style={{
-                background: "linear-gradient(135deg, #111118 0%, #0d0d15 100%)",
+                background: "linear-gradient(135deg, #0a1628 0%, #060d1f 100%)",
               }}
             >
               {/* Avatar */}
@@ -125,7 +130,7 @@ export default function TeamSection() {
                   style={{ backgroundColor: member.ringColor }}
                 />
                 {/* Online indicator */}
-                <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[#0a0a0f] flex items-center justify-center">
+                <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[#050a18] flex items-center justify-center">
                   <div className="w-2 h-2 rounded-full bg-emerald-400" />
                 </div>
               </div>

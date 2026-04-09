@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Baby, AlertTriangle } from "lucide-react";
+import { Shield, Baby, AlertTriangle, Building2 } from "lucide-react";
 
 const useCases = [
   {
@@ -30,21 +30,31 @@ const useCases = [
     title: "Proactive Threat Prevention",
     description:
       "A known offender enters. AURA alerts security before anything happens.",
-    color: "#5b67f4",
-    glow: "rgba(91, 103, 244, 0.15)",
+    color: "#2d6aff",
+    glow: "rgba(45, 106, 255, 0.15)",
     tag: "Threat Intelligence",
+  },
+  {
+    icon: Building2,
+    emoji: "🏢",
+    title: "Corporate Campus Security",
+    description:
+      "Monitor office buildings and university campuses. AURA brings affordable, intelligent surveillance to any mid-sized organization.",
+    color: "#34d399",
+    glow: "rgba(52, 211, 153, 0.15)",
+    tag: "Enterprise",
   },
 ];
 
 export default function UseCasesSection() {
   return (
-    <section className="relative py-24 sm:py-32 bg-[#0a0a0f] overflow-hidden">
+    <section className="relative py-24 sm:py-32 bg-[#050a18] overflow-hidden">
       {/* Subtle separator top */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
       {/* Background blobs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#ef4444]/4 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#5b67f4]/6 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#2d6aff]/6 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Header */}
@@ -68,7 +78,7 @@ export default function UseCasesSection() {
         </motion.div>
 
         {/* Use case cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {useCases.map((useCase, i) => {
             const Icon = useCase.icon;
             return (
@@ -79,7 +89,7 @@ export default function UseCasesSection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
                 whileHover={{ scale: 1.02, y: -4 }}
-                className="group relative rounded-2xl border border-white/8 bg-[#111118] p-7 overflow-hidden transition-all duration-300 hover:border-white/15"
+                className="group relative rounded-2xl border border-white/8 bg-[#0a1628] p-7 overflow-hidden transition-all duration-300 hover:border-white/15"
               >
                 {/* Glow background */}
                 <div
