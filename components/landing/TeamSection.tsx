@@ -33,7 +33,7 @@ const teamMembers = [
   },
   {
     initials: "H",
-    name: "Muhammad Hamza Saddiqi",
+    name: "Muhammad Hamza Siddiqui",
     role: "Security & Dashboard",
     gradient: "from-[#34d399] to-[#059669]",
     ringColor: "rgba(52, 211, 153, 0.4)",
@@ -81,25 +81,6 @@ export default function TeamSection() {
               University of Wollongong Dubai
             </span>
           </a>
-        </motion.div>
-
-        {/* Team photo placeholder */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-14"
-        >
-          <div className="rounded-2xl border border-dashed border-white/10 bg-[#0a1628]/60 p-8 flex flex-col items-center justify-center gap-3 min-h-[140px] max-w-2xl mx-auto">
-            <span className="text-2xl">📸</span>
-            <span className="text-[#e2e8f0]/30 text-sm font-medium font-mono">
-              [ ADD TEAM PHOTO HERE ]
-            </span>
-            <span className="text-[#e2e8f0]/15 text-xs">
-              Optional: group photo or banner
-            </span>
-          </div>
         </motion.div>
 
         {/* Team cards */}

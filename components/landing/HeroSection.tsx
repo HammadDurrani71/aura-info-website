@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Play } from "lucide-react";
 import Image from "next/image";
 
 interface Particle {
@@ -102,105 +102,23 @@ function ParticleCanvas() {
   );
 }
 
-const DASHBOARD_SLIDES = [
-  { src: "/AURA_Dashboard.png", alt: "AURA dashboard overview" },
-  { src: "/AURA_Search_Bar.png", alt: "AURA search" },
-  { src: "/AURA_Monitoring.png", alt: "AURA monitoring" },
-  { src: "/AURA_Floor_Map.png", alt: "AURA floor map" },
-  { src: "/AURA_Analytics.png", alt: "AURA analytics" },
-  { src: "/AURA_Watchlist.png", alt: "AURA watchlist" },
-  { src: "/AURA_Settings.png", alt: "AURA settings" },
-];
-
-function DashboardCarousel() {
-  const n = DASHBOARD_SLIDES.length;
-  const [index, setIndex] = useState(0);
-
-  const goNext = () => setIndex((i) => (i + 1) % n);
-  const goPrev = () => setIndex((i) => (i - 1 + n) % n);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % n);
-    }, 5000);
-    return () => clearInterval(id);
-  }, [n]);
-
+function DashboardImage() {
   return (
     <div className="px-3 pb-3">
       <div
-        className="group relative overflow-hidden rounded-2xl border border-[#2d6aff]/30 bg-[#0a1628]"
+        className="relative overflow-hidden rounded-2xl border border-[#2d6aff]/30 bg-[#0a1628]"
         style={{ boxShadow: "0 0 40px rgba(45, 106, 255, 0.15)" }}
       >
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl">
-          <motion.div
-            className="absolute inset-0 cursor-grab active:cursor-grabbing"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.1}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -50) goNext();
-              else if (info.offset.x > 50) goPrev();
-            }}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={index}
-                className="absolute inset-0"
-                initial={{ opacity: 0, x: 24 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -24 }}
-                transition={{ duration: 0.45, ease: "easeInOut" }}
-              >
-                <Image
-                  src={DASHBOARD_SLIDES[index].src}
-                  alt={DASHBOARD_SLIDES[index].alt}
-                  fill
-                  className="object-contain rounded-2xl"
-                  sizes="(max-width: 1280px) 100vw, 1280px"
-                  priority={index === 0}
-                  draggable={false}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-
-          <button
-            type="button"
-            aria-label="Previous slide"
-            onClick={(e) => {
-              e.stopPropagation();
-              goPrev();
-            }}
-            className="pointer-events-none absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/10 p-2 opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-white/20 group-hover:pointer-events-auto group-hover:opacity-100"
-          >
-            <ChevronLeft className="h-5 w-5 text-white" strokeWidth={2} />
-          </button>
-          <button
-            type="button"
-            aria-label="Next slide"
-            onClick={(e) => {
-              e.stopPropagation();
-              goNext();
-            }}
-            className="pointer-events-none absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/10 p-2 opacity-0 backdrop-blur-sm transition-opacity duration-300 hover:bg-white/20 group-hover:pointer-events-auto group-hover:opacity-100"
-          >
-            <ChevronRight className="h-5 w-5 text-white" strokeWidth={2} />
-          </button>
-        </div>
-
-        <div className="flex justify-center gap-2 py-3">
-          {DASHBOARD_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`Show slide ${i + 1}`}
-              onClick={() => setIndex(i)}
-              className={`h-2 w-2 rounded-full transition-colors duration-200 ${
-                i === index ? "bg-[#4da6ff]" : "bg-white/20 hover:bg-white/30"
-              }`}
-            />
-          ))}
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl">
+          <Image
+            src="/Aura_new_Dashboard.jpeg"
+            alt="AURA dashboard overview"
+            fill
+            className="object-contain rounded-2xl"
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            priority
+            draggable={false}
+          />
         </div>
       </div>
     </div>
@@ -308,7 +226,7 @@ export default function HeroSection() {
                 <span className="text-xs text-white/30">aura.dashboard.app</span>
               </div>
             </div>
-            <DashboardCarousel />
+            <DashboardImage />
           </div>
           {/* Reflection glow */}
           <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 bg-[#2d6aff]/20 blur-3xl rounded-full" />

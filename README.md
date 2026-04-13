@@ -39,4 +39,4 @@ Deployed on Vercel.
 ## Contact
 
 - Instagram: [@aura_uowd](https://www.instagram.com/aura_uowd)
-- Email: hammad.durrani7@gmail.com
+- Email: team.auravisionai@gmail.com

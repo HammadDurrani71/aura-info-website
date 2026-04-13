@@ -16,7 +16,7 @@ const useCases = [
   },
   {
     icon: Baby,
-    emoji: "👶",
+    emoji: "🧒",
     title: "Lost Child Alert",
     description:
       "A panicked parent's description triggers an instant cross-camera search and locates the child.",
