@@ -1,8 +1,15 @@
 "use client";
 
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
-import { useRef, useState, useEffect, useCallback } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  type PointerEvent,
+} from "react";
 import { MessageSquare, ScanSearch, Navigation } from "lucide-react";
+import Image from "next/image";
 
 const steps = [
   {
@@ -84,6 +91,56 @@ export default function HowItWorksSection() {
     window.addEventListener("mousemove", onMove, { passive: true });
     return () => window.removeEventListener("mousemove", onMove);
   }, [isHoveringSection, updateOrbFromClientX]);
+
+  const infographicScrollRef = useRef<HTMLDivElement>(null);
+  const infographicDragRef = useRef<{
+    pointerId: number | null;
+    startX: number;
+    scrollLeft: number;
+  }>({ pointerId: null, startX: 0, scrollLeft: 0 });
+
+  const onInfographicPointerDown = useCallback(
+    (e: PointerEvent<HTMLDivElement>) => {
+      const el = infographicScrollRef.current;
+      if (!el) return;
+      if (e.pointerType === "touch") return;
+      infographicDragRef.current = {
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        scrollLeft: el.scrollLeft,
+      };
+      el.setPointerCapture(e.pointerId);
+      el.style.cursor = "grabbing";
+    },
+    []
+  );
+
+  const onInfographicPointerMove = useCallback(
+    (e: PointerEvent<HTMLDivElement>) => {
+      const el = infographicScrollRef.current;
+      if (!el || e.pointerType === "touch") return;
+      const { pointerId, startX, scrollLeft } = infographicDragRef.current;
+      if (pointerId !== e.pointerId) return;
+      el.scrollLeft = scrollLeft - (e.clientX - startX);
+    },
+    []
+  );
+
+  const onInfographicPointerUp = useCallback(
+    (e: PointerEvent<HTMLDivElement>) => {
+      const el = infographicScrollRef.current;
+      if (!el || e.pointerType === "touch") return;
+      if (infographicDragRef.current.pointerId !== e.pointerId) return;
+      infographicDragRef.current.pointerId = null;
+      try {
+        el.releasePointerCapture(e.pointerId);
+      } catch {
+        /* already released */
+      }
+      el.style.cursor = "grab";
+    },
+    []
+  );
 
   return (
     <section
@@ -282,7 +339,7 @@ export default function HowItWorksSection() {
 
         </div>
 
-        {/* Illustration placeholder */}
+        {/* Full workflow infographic */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -290,22 +347,31 @@ export default function HowItWorksSection() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="mt-20 w-full"
         >
-          <div className="relative rounded-2xl border border-dashed border-white/10 bg-[#0a1628]/60 p-10 flex flex-col items-center justify-center gap-3 min-h-[200px]">
-            <div className="flex gap-3">
-              {["#2d6aff", "#a78bfa", "#4da6ff"].map((c, i) => (
-                <div
-                  key={i}
-                  className="w-2 h-2 rounded-full animate-pulse"
-                  style={{ backgroundColor: c, animationDelay: `${i * 0.2}s` }}
-                />
-              ))}
+          <p className="mb-3 text-center text-xs text-[#e2e8f0]/45 md:hidden">
+            Swipe sideways to explore the full workflow
+          </p>
+          <div className="relative rounded-2xl border border-white/10 bg-[#f8f4ec] overflow-hidden shadow-lg shadow-black/20">
+            <div
+              ref={infographicScrollRef}
+              role="region"
+              aria-label="How AURA works — scroll horizontally on small screens"
+              onPointerDown={onInfographicPointerDown}
+              onPointerMove={onInfographicPointerMove}
+              onPointerUp={onInfographicPointerUp}
+              onPointerCancel={onInfographicPointerUp}
+              className="w-full cursor-grab overflow-x-auto overflow-y-hidden overscroll-x-contain [-webkit-overflow-scrolling:touch] touch-pan-x select-none active:cursor-grabbing"
+            >
+              <Image
+                src="/HOW_AURA_WORKS_FULL.png"
+                alt="How AURA works: from facial recognition and alerts through search, verification, path mapping, to live dispatch"
+                width={2400}
+                height={900}
+                className="pointer-events-none h-auto w-max max-h-[min(52vh,520px)] max-w-none object-contain object-top lg:pointer-events-auto lg:max-h-none lg:min-w-0 lg:w-full"
+                sizes="(max-width: 1024px) 2400px, 1280px"
+                draggable={false}
+                priority={false}
+              />
             </div>
-            <span className="text-[#e2e8f0]/30 text-sm font-medium font-mono">
-              [ ADD HOW IT WORKS ILLUSTRATION HERE ]
-            </span>
-            <span className="text-[#e2e8f0]/15 text-xs">
-              Suggested: workflow diagram or animated GIF
-            </span>
           </div>
         </motion.div>
       </div>
