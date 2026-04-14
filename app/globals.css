@@ -27,24 +27,26 @@ body {
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: #2d6aff #050a18;
 }
 
-body {
-  overflow-x: hidden;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
+/* Visible root scrollbar */
+html::-webkit-scrollbar {
   width: 6px;
 }
-::-webkit-scrollbar-track {
+
+html::-webkit-scrollbar-track {
   background: #050a18;
 }
-::-webkit-scrollbar-thumb {
+
+html::-webkit-scrollbar-thumb {
   background: #2d6aff;
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
+
+html::-webkit-scrollbar-thumb:hover {
   background: #4da6ff;
 }
 
