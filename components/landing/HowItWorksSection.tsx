@@ -202,7 +202,7 @@ export default function HowItWorksSection() {
   return (
     <section
       id="how-it-works"
-      className="relative py-24 sm:py-32 bg-[#050a18] overflow-hidden"
+      className="relative scroll-mt-28 py-24 sm:py-32 bg-[#050a18] overflow-hidden"
       onMouseEnter={() => {
         setIsHoveringSection(true);
         requestAnimationFrame(() => centerOrbOnTrack());

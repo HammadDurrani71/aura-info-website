@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer id="contact" className="bg-[#050a18] border-t border-white/10">
+    <footer className="bg-[#050a18] border-t border-white/10">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}

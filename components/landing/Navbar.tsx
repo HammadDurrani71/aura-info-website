@@ -79,10 +79,10 @@ export default function Navbar() {
           {/* CTA + Mobile toggle */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => handleNavClick("#contact")}
+              onClick={() => handleNavClick("#demo-video")}
               className="hidden md:inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#4da6ff] border border-[#4da6ff]/50 rounded-lg hover:bg-[#4da6ff]/10 hover:border-[#4da6ff] transition-all duration-200 hover:shadow-[0_0_15px_rgba(77,166,255,0.2)]"
             >
-              Request Demo
+              Watch Demo
             </button>
 
             {/* Mobile hamburger */}
@@ -118,10 +118,10 @@ export default function Navbar() {
                 </button>
               ))}
               <button
-                onClick={() => handleNavClick("#contact")}
+                onClick={() => handleNavClick("#demo-video")}
                 className="mt-2 w-full py-2.5 text-sm font-medium text-[#4da6ff] border border-[#4da6ff]/50 rounded-lg hover:bg-[#4da6ff]/10 transition-all duration-200"
               >
-                Request Demo
+                Watch Demo
               </button>
             </div>
           </motion.div>

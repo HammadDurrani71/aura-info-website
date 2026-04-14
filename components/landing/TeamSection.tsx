@@ -7,6 +7,7 @@ const teamMembers = [
     initials: "H",
     name: "Hammad Durrani",
     role: "Frontend Lead",
+    studentId: "8548535",
     gradient: "from-[#2d6aff] to-[#6b9fff]",
     ringColor: "rgba(45, 106, 255, 0.4)",
   },
@@ -14,6 +15,7 @@ const teamMembers = [
     initials: "U",
     name: "Usman Farooq",
     role: "Project Lead",
+    studentId: "9532710",
     gradient: "from-[#4da6ff] to-[#0ea5e9]",
     ringColor: "rgba(77, 166, 255, 0.4)",
   },
@@ -21,6 +23,7 @@ const teamMembers = [
     initials: "R",
     name: "Rudra Lakhani",
     role: "Backend & ML",
+    studentId: "8320433",
     gradient: "from-[#a78bfa] to-[#7c3aed]",
     ringColor: "rgba(167, 139, 250, 0.4)",
   },
@@ -28,6 +31,7 @@ const teamMembers = [
     initials: "H",
     name: "Hala Abu Salem",
     role: "ML & Attributes",
+    studentId: "7826606",
     gradient: "from-[#f472b6] to-[#ec4899]",
     ringColor: "rgba(244, 114, 182, 0.4)",
   },
@@ -35,6 +39,7 @@ const teamMembers = [
     initials: "H",
     name: "Muhammad Hamza Siddiqui",
     role: "Security & Dashboard",
+    studentId: "8699720",
     gradient: "from-[#34d399] to-[#059669]",
     ringColor: "rgba(52, 211, 153, 0.4)",
   },
@@ -93,7 +98,7 @@ export default function TeamSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={{ scale: 1.05, y: -5 }}
-              className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/8 bg-[#111118] w-48 cursor-default transition-all duration-300 hover:border-white/15"
+              className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-white/8 bg-[#111118] w-52 cursor-default transition-all duration-300 hover:border-white/15"
               style={{
                 background: "linear-gradient(135deg, #0a1628 0%, #060d1f 100%)",
               }}
@@ -117,9 +122,12 @@ export default function TeamSection() {
               </div>
 
               {/* Name & role */}
-              <div className="text-center">
+              <div className="text-center w-full">
                 <p className="text-white font-semibold text-sm">{member.name}</p>
                 <p className="text-[#e2e8f0]/45 text-xs mt-0.5">{member.role}</p>
+                <p className="text-[#e2e8f0]/35 text-[10px] mt-1.5 font-mono tabular-nums tracking-wide">
+                  Student ID · {member.studentId}
+                </p>
               </div>
 
               {/* Hover gradient underline */}
@@ -140,6 +148,22 @@ export default function TeamSection() {
         >
           Built with passion at UOWD · Computer Science Capstone Project 2026
         </motion.p>
+
+        <motion.div
+          id="contact"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="flex justify-center scroll-mt-28 mt-10"
+        >
+          <a
+            href="mailto:team.auravisionai@gmail.com"
+            className="inline-flex items-center justify-center px-8 py-3 rounded-xl bg-gradient-to-r from-[#2d6aff] to-[#1a56e8] text-white text-sm font-semibold hover:from-[#4d80ff] hover:to-[#2d6aff] transition-all duration-300 shadow-lg shadow-[#2d6aff]/25 hover:shadow-[#2d6aff]/40"
+          >
+            Contact
+          </a>
+        </motion.div>
       </div>
     </section>
   );

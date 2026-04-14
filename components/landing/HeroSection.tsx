@@ -204,17 +204,17 @@ export default function HeroSection() {
           className="flex flex-col sm:flex-row items-center gap-4 mb-20"
         >
           <button
-            onClick={() => handleScroll("#how-it-works")}
+            onClick={() => handleScroll("#demo-video")}
             className="group flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-[#2d6aff] to-[#1a56e8] text-white font-semibold text-base hover:from-[#4d80ff] hover:to-[#2d6aff] transition-all duration-300 shadow-lg shadow-[#2d6aff]/30 hover:shadow-[#2d6aff]/50 hover:scale-[1.02]"
           >
             <Play size={16} className="group-hover:scale-110 transition-transform" />
-            See How It Works
+            Watch Demo Video
           </button>
           <button
-            onClick={() => handleScroll("#contact")}
+            onClick={() => handleScroll("#how-it-works")}
             className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl border border-white/20 text-white/80 font-semibold text-base hover:border-[#4da6ff]/50 hover:text-[#4da6ff] hover:bg-[#4da6ff]/5 transition-all duration-300"
           >
-            Request Demo
+            See How it works
             <ArrowRight size={16} />
           </button>
         </motion.div>
