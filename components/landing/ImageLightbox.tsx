@@ -98,7 +98,8 @@ export default function ImageLightbox({
           role="dialog"
           aria-modal="true"
           aria-label={alt}
-          className="fixed inset-0 z-[9999] isolate flex items-center justify-center p-3 sm:p-6"
+          className="fixed inset-0 z-[2147483647] isolate flex items-center justify-center p-3 sm:p-6"
+          style={{ isolation: "isolate", transform: "translateZ(0)" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -106,12 +107,14 @@ export default function ImageLightbox({
         >
           <button
             type="button"
-            className="absolute inset-0 z-0 bg-black/85 backdrop-blur-sm"
+            className="absolute inset-0 z-0 backdrop-blur-sm"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.9)" }}
             aria-label="Close preview"
             onClick={onClose}
           />
           <motion.div
             className="relative z-10 w-full max-w-[min(99vw,2200px)]"
+            style={{ isolation: "isolate" }}
             initial={{ scale: 0.96, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.96, opacity: 0 }}
@@ -134,7 +137,7 @@ export default function ImageLightbox({
                   onPointerMove={onScrollPointerMove}
                   onPointerUp={onScrollPointerUp}
                   onPointerCancel={onScrollPointerUp}
-                  className="max-h-[min(92vh,920px)] w-full cursor-grab select-none overflow-x-auto overflow-y-auto rounded-xl border border-white/15 bg-[#f8f4ec] shadow-2xl [-webkit-overflow-scrolling:touch] active:cursor-grabbing"
+                  className="hide-scrollbar max-h-[min(92vh,920px)] w-full cursor-grab select-none overflow-x-auto overflow-y-hidden rounded-xl border border-white/15 bg-[#f8f4ec] shadow-2xl [-webkit-overflow-scrolling:touch] active:cursor-grabbing"
                   style={{ touchAction: "pan-x pan-y" }}
                 >
                   <Image

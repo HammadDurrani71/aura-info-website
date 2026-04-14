@@ -433,7 +433,7 @@ export default function HowItWorksSection() {
                 autoScrollPausedRef.current = false;
                 infographicDragRef.current.didDrag = false;
               }}
-              className="w-full cursor-grab overflow-x-auto overflow-y-hidden overscroll-x-contain overscroll-y-auto [-webkit-overflow-scrolling:touch] active:cursor-grabbing"
+              className="hide-scrollbar w-full cursor-grab overflow-x-auto overflow-y-hidden overscroll-x-contain [-webkit-overflow-scrolling:touch] active:cursor-grabbing"
               style={{ touchAction: "pan-x pan-y" }}
             >
               <Image

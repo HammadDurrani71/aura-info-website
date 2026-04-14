@@ -8,7 +8,7 @@ import Footer from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <main className="relative bg-[#050a18] overflow-x-hidden">
+    <main className="relative bg-[#050a18]">
       <Navbar />
       <HeroSection />
       <FeaturesSection />
