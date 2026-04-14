@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import Image from "next/image";
+import ImageLightbox from "./ImageLightbox";
 
 interface Particle {
   x: number;
@@ -102,30 +103,39 @@ function ParticleCanvas() {
   );
 }
 
-function DashboardImage() {
+function DashboardImage({ onOpenPreview }: { onOpenPreview: () => void }) {
   return (
     <div className="px-3 pb-3">
       <div
         className="relative overflow-hidden rounded-2xl border border-[#2d6aff]/30 bg-[#0a1628]"
         style={{ boxShadow: "0 0 40px rgba(45, 106, 255, 0.15)" }}
       >
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl">
-          <Image
-            src="/Aura_new_Dashboard.jpeg"
-            alt="AURA dashboard overview"
-            fill
-            className="object-contain rounded-2xl"
-            sizes="(max-width: 1280px) 100vw, 1280px"
-            priority
-            draggable={false}
-          />
-        </div>
+        <button
+          type="button"
+          onClick={onOpenPreview}
+          className="group relative flex w-full cursor-zoom-in overflow-hidden rounded-2xl border-0 bg-transparent p-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4da6ff]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+          aria-label="Open larger dashboard preview"
+        >
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl">
+            <Image
+              src="/Aura_new_Dashboard.jpeg"
+              alt="AURA dashboard overview"
+              fill
+              className="object-contain rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              priority
+              draggable={false}
+            />
+          </div>
+        </button>
       </div>
     </div>
   );
 }
 
 export default function HeroSection() {
+  const [dashboardLightboxOpen, setDashboardLightboxOpen] = useState(false);
+
   const handleScroll = (id: string) => {
     document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -226,12 +236,19 @@ export default function HeroSection() {
                 <span className="text-xs text-white/30">aura.dashboard.app</span>
               </div>
             </div>
-            <DashboardImage />
+            <DashboardImage onOpenPreview={() => setDashboardLightboxOpen(true)} />
           </div>
           {/* Reflection glow */}
           <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-3/4 h-20 bg-[#2d6aff]/20 blur-3xl rounded-full" />
         </motion.div>
       </div>
+
+      <ImageLightbox
+        open={dashboardLightboxOpen}
+        onClose={() => setDashboardLightboxOpen(false)}
+        src="/Aura_new_Dashboard.jpeg"
+        alt="AURA dashboard overview"
+      />
 
       {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050a18] to-transparent pointer-events-none" />

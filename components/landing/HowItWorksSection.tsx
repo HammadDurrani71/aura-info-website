@@ -8,8 +8,9 @@ import {
   useCallback,
   type PointerEvent,
 } from "react";
-import { MessageSquare, ScanSearch, Navigation } from "lucide-react";
+import { MessageSquare, ScanSearch, Navigation, Maximize2 } from "lucide-react";
 import Image from "next/image";
+import ImageLightbox from "./ImageLightbox";
 
 const steps = [
   {
@@ -50,6 +51,7 @@ export default function HowItWorksSection() {
   const isInView = useInView(lineRef, { once: true, margin: "-100px" });
 
   const [isHoveringSection, setIsHoveringSection] = useState(false);
+  const [infographicLightboxOpen, setInfographicLightboxOpen] = useState(false);
   const orbX = useMotionValue(0);
   const orbSpringX = useSpring(orbX, { stiffness: 200, damping: 20 });
 
@@ -97,20 +99,26 @@ export default function HowItWorksSection() {
     pointerId: number | null;
     startX: number;
     scrollLeft: number;
-  }>({ pointerId: null, startX: 0, scrollLeft: 0 });
+    startY: number;
+    didDrag: boolean;
+  }>({ pointerId: null, startX: 0, startY: 0, scrollLeft: 0, didDrag: false });
 
   const onInfographicPointerDown = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       const el = infographicScrollRef.current;
       if (!el) return;
-      if (e.pointerType === "touch") return;
       infographicDragRef.current = {
         pointerId: e.pointerId,
         startX: e.clientX,
+        startY: e.clientY,
         scrollLeft: el.scrollLeft,
+        didDrag: false,
       };
-      el.setPointerCapture(e.pointerId);
-      el.style.cursor = "grabbing";
+      // Touch: allow native vertical scroll + horizontal pan.
+      if (e.pointerType !== "touch") {
+        el.setPointerCapture(e.pointerId);
+        el.style.cursor = "grabbing";
+      }
     },
     []
   );
@@ -118,10 +126,18 @@ export default function HowItWorksSection() {
   const onInfographicPointerMove = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       const el = infographicScrollRef.current;
-      if (!el || e.pointerType === "touch") return;
-      const { pointerId, startX, scrollLeft } = infographicDragRef.current;
+      if (!el) return;
+      const { pointerId, startX, startY, scrollLeft } = infographicDragRef.current;
       if (pointerId !== e.pointerId) return;
-      el.scrollLeft = scrollLeft - (e.clientX - startX);
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        infographicDragRef.current.didDrag = true;
+      }
+      // For mouse/pen, drag pans horizontally.
+      if (e.pointerType !== "touch") {
+        el.scrollLeft = scrollLeft - dx;
+      }
     },
     []
   );
@@ -129,18 +145,59 @@ export default function HowItWorksSection() {
   const onInfographicPointerUp = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       const el = infographicScrollRef.current;
-      if (!el || e.pointerType === "touch") return;
+      if (!el) return;
       if (infographicDragRef.current.pointerId !== e.pointerId) return;
       infographicDragRef.current.pointerId = null;
-      try {
-        el.releasePointerCapture(e.pointerId);
-      } catch {
-        /* already released */
+      if (e.pointerType !== "touch") {
+        try {
+          el.releasePointerCapture(e.pointerId);
+        } catch {
+          /* already released */
+        }
+        el.style.cursor = "grab";
       }
-      el.style.cursor = "grab";
     },
     []
   );
+
+  const autoScrollPausedRef = useRef(false);
+  useEffect(() => {
+    const el = infographicScrollRef.current;
+    if (!el) return;
+
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (!mq.matches) return;
+
+    let raf = 0;
+    let dir = 1;
+    const speedPxPerSecond = 18;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      if (autoScrollPausedRef.current) {
+        last = now;
+        return;
+      }
+      const dt = (now - last) / 1000;
+      last = now;
+
+      const max = el.scrollWidth - el.clientWidth;
+      if (max <= 0) return;
+
+      el.scrollLeft += dir * speedPxPerSecond * dt;
+      if (el.scrollLeft >= max - 1) dir = -1;
+      if (el.scrollLeft <= 1) dir = 1;
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const openInfographicIfNotDragging = useCallback(() => {
+    if (infographicDragRef.current.didDrag) return;
+    setInfographicLightboxOpen(true);
+  }, []);
 
   return (
     <section
@@ -351,6 +408,15 @@ export default function HowItWorksSection() {
             Swipe sideways to explore the full workflow
           </p>
           <div className="relative rounded-2xl border border-white/10 bg-[#f8f4ec] overflow-hidden shadow-lg shadow-black/20">
+            <button
+              type="button"
+              onClick={() => setInfographicLightboxOpen(true)}
+              className="absolute right-2 top-2 z-10 flex items-center gap-1.5 rounded-lg bg-black/45 px-2.5 py-1.5 text-xs font-medium text-white shadow-md backdrop-blur-sm transition-colors hover:bg-black/60"
+              aria-label="Open full workflow image"
+            >
+              <Maximize2 className="h-3.5 w-3.5" strokeWidth={2} />
+              <span className="hidden sm:inline">Expand</span>
+            </button>
             <div
               ref={infographicScrollRef}
               role="region"
@@ -359,21 +425,38 @@ export default function HowItWorksSection() {
               onPointerMove={onInfographicPointerMove}
               onPointerUp={onInfographicPointerUp}
               onPointerCancel={onInfographicPointerUp}
-              className="w-full cursor-grab overflow-x-auto overflow-y-hidden overscroll-x-contain [-webkit-overflow-scrolling:touch] touch-pan-x select-none active:cursor-grabbing"
+              onClick={openInfographicIfNotDragging}
+              onPointerEnter={() => {
+                autoScrollPausedRef.current = true;
+              }}
+              onPointerLeave={() => {
+                autoScrollPausedRef.current = false;
+                infographicDragRef.current.didDrag = false;
+              }}
+              className="w-full cursor-grab overflow-x-auto overflow-y-hidden overscroll-x-contain overscroll-y-auto [-webkit-overflow-scrolling:touch] active:cursor-grabbing"
+              style={{ touchAction: "pan-x pan-y" }}
             >
               <Image
                 src="/HOW_AURA_WORKS_FULL.png"
                 alt="How AURA works: from facial recognition and alerts through search, verification, path mapping, to live dispatch"
                 width={2400}
                 height={900}
-                className="pointer-events-none h-auto w-max max-h-[min(52vh,520px)] max-w-none object-contain object-top lg:pointer-events-auto lg:max-h-none lg:min-w-0 lg:w-full"
-                sizes="(max-width: 1024px) 2400px, 1280px"
+                className="pointer-events-none h-auto w-[2400px] max-h-[min(52vh,520px)] max-w-none object-contain object-top lg:w-full lg:max-h-none"
+                sizes="(max-width: 1024px) 2400px, 1400px"
                 draggable={false}
                 priority={false}
               />
             </div>
           </div>
         </motion.div>
+
+        <ImageLightbox
+          open={infographicLightboxOpen}
+          onClose={() => setInfographicLightboxOpen(false)}
+          src="/HOW_AURA_WORKS_FULL.png"
+          alt="How AURA works: full workflow from detection to dispatch"
+          horizontalScroll
+        />
       </div>
     </section>
   );
